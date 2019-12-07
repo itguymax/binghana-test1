@@ -1,0 +1,54 @@
+<section class="donation-section" style="background-image: url('/img/bg.jpg');">
+  <div class="container donation-container">
+    <div class="d-flex flex-column justify-content-center align-items-center">
+      <header>
+        <h1 class="title">Construction du pont de Sa'a</h1>
+        <p class="subTitle">Contribuer pour la refection du pont de l'enfance de Sa'a</p>
+      </header>
+      <div class="donation-form-container">
+        <div class="donation-form-content ">
+          <form action="/api/pay" method="post" class="form-row">
+
+            {{#each errors}}
+            <div class="alert alert-danger col-md-12">
+              <p>{{text}}</p>
+            </div>
+            {{/each}}
+            <div class="form-group col-md-12 mb-5">
+              <input type="number" id="donation_amount" name="donation_amount" class="form-control" required='true'
+                min="1000" aria-label="Donation Amount" placeholder="Entrer le montant" value={{#if montant}}{{montant}}
+                {{else}} "" {{/if}} />
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-block btn-lg mb-2">Faire un don</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{{#if data}}
+<section class="donator-section">
+  <div class="donators-content container">
+    <div class="row mb-5">
+      <header class="col-md-12 d-flex justify-content-center align-items-center">
+        <h1 style="text-align: center;">Ils ont deja contribue</h1>
+      </header>
+    </div>
+    <div class="row">
+      {{#each data}}
+      <div class="col-md-4 d-flex justify-content-center align-items-center">
+        <div class="donator-img"><img alt="danator image"
+            src={{#if profile_url}}{{profile_url}}{{else}}"http://ssl.gstatic.com/accounts/ui/avatar_2x.png"{{/if}}
+            class="img-responsive" /></div>
+        <p style="margin-left: 8px;">{{name}} - {{amount}} USD</p>
+      </div>
+
+      {{/each}}
+    </div>
+  </div>
+
+</section>
+{{else}}
+<div></div>
+{{/if}}
