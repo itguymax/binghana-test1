@@ -10,17 +10,8 @@ router.route("/success").get(async (req, res) => {
   let errors = [];
   const paymentId = req.query.paymentId;
   const payerId = req.query.PayerID;
-  const amount = req.params.amount
   const execute_payment_json = {
-    payer_id: `${payerId}`,
-    transactions: [
-      {
-        amount: {
-          currency: "USD",
-          total: "300.00"
-        }
-      }
-    ]
+    payer_id: `${payerId}`
   };
   paypal.payment.execute(
     paymentId,
@@ -47,7 +38,7 @@ router.route("/success").get(async (req, res) => {
         };
         const angel = await Angels.create(angelData);
 
-        if (angel) {
+        if (angel) { // send and email once the danation has been save in DB
           const mailOptions = {
             to: `"Binghana LTD" <t.kmyta@gmail.com>`,
             from: `"TEST EMAIL" <${process.env.EMAIL_USERNAME}>`,
@@ -59,6 +50,7 @@ router.route("/success").get(async (req, res) => {
         }
       } catch (error) {
         console.error(JSON.stringify(error));
+        errors.push({text: 'Something went wrong'})
         res.render("index", { errors });
       }
     }
@@ -75,14 +67,15 @@ router.route('/pay').post(
   (req, res) => {
     const amount = req.body.donation_amount + '.00'
     let errors =[]
-    if(!amount){
+    if(!amount){ // check for empty field
       errors.push({text: 'Please Enter donation amount'})
     }
-    if(parseInt(amount) < 1000){
+    if(parseInt(amount) < 1000){ // check for amount > than 1000
       errors.push({text: 'Please donation amount should be above 1000'})
     }
     
-    
+    if (errors.length > 0) return res.render('index', {errors});
+   
     
     console.log('req',req.body)
     
@@ -102,7 +95,7 @@ router.route('/pay').post(
               {
                 name: "Don",
                 sku: "001",
-                price: "300.00",
+                price: `${amount}`,
                 currency: "USD",
                 quantity: 1
               }
@@ -110,7 +103,7 @@ router.route('/pay').post(
           },
           amount: {
             currency: "USD",
-            total: "300.00"
+            total: `${amount}`
           },
           description: "réfection du Pont de l'enfance à Sa'a"
         }
